@@ -14,7 +14,7 @@ namespace CosmosGremlinORM
 		/// <value>
 		/// A <c>string</c> representing the vertex document identifier.
 		/// </value>
-		[Property(Key = "id")]
+		[GraphProperty(Key = "id")]
 		public string Id { get; set; } = Guid.NewGuid().ToString();
 
 		/// <summary>

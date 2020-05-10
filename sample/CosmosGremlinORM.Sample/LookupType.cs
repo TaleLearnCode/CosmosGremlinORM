@@ -8,10 +8,10 @@ namespace CosmosGremlinORM.Sample
 	public abstract class LookupType : Vertex
 	{
 
-		[Property(IsRequired = true)]
+		[GraphProperty(IsRequired = true)]
 		public string Name { get; set; }
 
-		[Property(IsRequired = true)]
+		[GraphProperty(IsRequired = true)]
 		public int SortOrder { get; set; }
 
 	}

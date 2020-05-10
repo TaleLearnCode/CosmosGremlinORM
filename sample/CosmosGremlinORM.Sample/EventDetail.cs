@@ -6,32 +6,35 @@ using System.Threading;
 namespace CosmosGremlinORM.Sample
 {
 
-	[Vertex("Event")]
+	[Vertex("event")]
 	public class EventDetail : Vertex
 	{
 
-		[Property(IsRequired = true)]
+		[GraphProperty(Key = "eventId")]
+		public string EventId { get { return Id; } }
+
+		[GraphProperty(IsRequired = true)]
 		public string Name { get; set; }
 
-		[Property(IsRequired = false)]
+		[GraphProperty(IsRequired = false, Key = "About")]
 		public string About { get; set; }
 
-		[Property(IsRequired = false)]
+		[GraphProperty(IsRequired = false)]
 		public string LocationName { get; set; }
 
-		[Property(IsRequired = false)]
+		[GraphProperty(IsRequired = false)]
 		public PostalAddress Location { get; set; }
 
-		[Property(IsRequired = true)]
+		[GraphProperty(IsRequired = true)]
 		public DateTime StartDate { get; set; }
 
-		[Property(IsRequired = true)]
+		[GraphProperty(IsRequired = true)]
 		public DateTime EndDate { get; set; }
 
-		[Property(IsRequired = false)]
+		[GraphProperty(IsRequired = false)]
 		public List<EventDay> EventDays { get; } = new List<EventDay>();
 
-		[Property(IsRequired = false)]
+		[GraphProperty(IsRequired = false)]
 		public Uri RegistrationSiteUri { get; set; }
 
 	}

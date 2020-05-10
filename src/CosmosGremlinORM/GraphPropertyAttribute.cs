@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Reflection;
 using System.Text;
 
 namespace CosmosGremlinORM
@@ -10,7 +12,7 @@ namespace CosmosGremlinORM
 	/// </summary>
 	/// <seealso cref="System.Attribute" />
 	[AttributeUsage(AttributeTargets.Property)]
-	public class PropertyAttribute : Attribute
+	public class GraphPropertyAttribute : Attribute
 	{
 
 		/// <summary>
@@ -37,12 +39,39 @@ namespace CosmosGremlinORM
 		/// </value>
 		public bool IncludeInGraph { get; set; }
 
-		public PropertyAttribute()
+		public GraphPropertyAttribute()
 		{
 			IsRequired = false;
 			IncludeInGraph = true;
 		}
 
+		public static GraphPropertyAttribute GetGraphPropertyAttribute(PropertyInfo propertyInfo)
+		{
+			if (propertyInfo is null) return new GraphPropertyAttribute();
+			var graphPropertyAttribute = new GraphPropertyAttribute();
+			foreach (var attribute in propertyInfo.CustomAttributes)
+			{
+				if (attribute.AttributeType == typeof(GraphPropertyAttribute))
+				{
+					foreach (var namedArgument in attribute.NamedArguments)
+					{
+						switch (namedArgument.MemberName)
+						{
+							case "Key":
+								graphPropertyAttribute.Key = namedArgument.TypedValue.ToString().Replace("\"", string.Empty);
+								break;
+							case "IsRequired":
+								graphPropertyAttribute.IsRequired = (bool)namedArgument.TypedValue.Value;
+								break;
+							case "IncludeInGraph":
+								graphPropertyAttribute.IsRequired = (bool)namedArgument.TypedValue.Value;
+								break;
+						}
+					}
+				}
+			}
+			return graphPropertyAttribute;
+		}
 	}
 
 }

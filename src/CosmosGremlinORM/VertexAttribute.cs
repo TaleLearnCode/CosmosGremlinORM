@@ -27,6 +27,8 @@ namespace CosmosGremlinORM
 		/// </value>
 		public bool SoftDelete { get; set; }
 
+		public PropertyNamingPolicy PropertyNamingPolicy { get; set; } = PropertyNamingPolicy.CamelCase;
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="VertexAttribute"/> class.
 		/// </summary>

@@ -9,17 +9,17 @@ namespace CosmosGremlinORM.Sample
 	public class EventDay : Vertex
 	{
 
-		[Property(IsRequired = true)]
+		[GraphProperty(IsRequired = true)]
 		public DateTime Date { get; set; }
 
-		[Property(IsRequired = true)]
+		[GraphProperty(IsRequired = true)]
 		public int StartTimeOffset { get; set; }
 
-		[Property(IsRequired = true)]
+		[GraphProperty(IsRequired = true)]
 		public int EndDateTime { get; set; }
 
 		// TODO: If no value in graph; set value to the Date
-		[Property(IsRequired = false)]
+		[GraphProperty(IsRequired = false)]
 		public string Title { get; set; }
 
 	}

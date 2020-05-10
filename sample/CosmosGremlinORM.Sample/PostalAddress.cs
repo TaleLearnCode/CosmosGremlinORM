@@ -11,22 +11,22 @@ namespace CosmosGremlinORM.Sample
 
 		public PostalAddressType PostalAddressType { get; set; }
 
-		[Property(IsRequired = false)]
+		[GraphProperty(IsRequired = false)]
 		public string AddressLine1 { get; set; }
 
-		[Property(IsRequired = false)]
+		[GraphProperty(IsRequired = false)]
 		public string AddressLine2 { get; set; }
 
-		[Property(IsRequired = true)]
+		[GraphProperty(IsRequired = true)]
 		public string City { get; set; }
 
-		[Property(IsRequired = false)]
+		[GraphProperty(IsRequired = false)]
 		public string CountryDivision { get; set; }
 
-		[Property(IsRequired = false)]
+		[GraphProperty(IsRequired = false)]
 		public string Country { get; set; }
 
-		[Property(IsRequired = false)]
+		[GraphProperty(IsRequired = false)]
 		public string PostalCode { get; set; }
 
 	}
