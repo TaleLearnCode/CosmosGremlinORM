@@ -45,33 +45,6 @@ namespace CosmosGremlinORM
 			IncludeInGraph = true;
 		}
 
-		public static GraphPropertyAttribute GetGraphPropertyAttribute(PropertyInfo propertyInfo)
-		{
-			if (propertyInfo is null) return new GraphPropertyAttribute();
-			var graphPropertyAttribute = new GraphPropertyAttribute();
-			foreach (var attribute in propertyInfo.CustomAttributes)
-			{
-				if (attribute.AttributeType == typeof(GraphPropertyAttribute))
-				{
-					foreach (var namedArgument in attribute.NamedArguments)
-					{
-						switch (namedArgument.MemberName)
-						{
-							case "Key":
-								graphPropertyAttribute.Key = namedArgument.TypedValue.ToString().Replace("\"", string.Empty);
-								break;
-							case "IsRequired":
-								graphPropertyAttribute.IsRequired = (bool)namedArgument.TypedValue.Value;
-								break;
-							case "IncludeInGraph":
-								graphPropertyAttribute.IsRequired = (bool)namedArgument.TypedValue.Value;
-								break;
-						}
-					}
-				}
-			}
-			return graphPropertyAttribute;
-		}
 	}
 
 }

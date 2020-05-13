@@ -15,46 +15,60 @@ namespace CosmosGremlinORM.SampleConsole
 
 			var eventDetail = new EventDetail()
 			{
-				Name = "Test Event 2020",
+				Name = "Test Event 2020 4",
 				LocationName = "Louisville, KY",
 				StartDate = new DateTime(2020, 7, 1),
 				EndDate = new DateTime(2020, 7, 2),
-				About = "This is a really cool event"
+				About = "This is a really cool event",
+				ThisIsANumber = 189,
+				RegistrationSiteUri = new Uri("https://www.talelearncode.com")
 			};
 
-			//Console.WriteLine(eventDetail.Id);
-			Console.WriteLine(GetAddVertexGremlin<EventDetail>(eventDetail));
+			//Console.WriteLine(GetAddVertexGremlin<EventDetail>(eventDetail));
 
-			// g.addV('Event').property('Name', 'Test Event 2020').property('LocationName', 'Louisville, KY').property('StartDate', '2020-07-01').property('EndDate', '2020-07-02')
-			// g.addV('EventDetail').property('Name', 'Test Event 2020').property('LocationName', 'Louisville, KY').property('id', 'c0909637-34a2-4fd1-908a-222fbb40d8fb')
+			Console.WriteLine(Vertex.Save<EventDetail>(eventDetail));
+
 		}
 
 
 		public static string GetAddVertexGremlin<T>(T testValue)
 		{
-			VertexAttribute vertextAttribute = (VertexAttribute)Attribute.GetCustomAttribute(typeof(T), typeof(VertexAttribute));
+			VertexAttribute vertexAttribute = (VertexAttribute)Attribute.GetCustomAttribute(typeof(T), typeof(VertexAttribute));
 
-			var gremlin = new StringBuilder($"g.addV('{(vertextAttribute != null && (!string.IsNullOrWhiteSpace(vertextAttribute.Label)) ? vertextAttribute.Label : typeof(T).Name)}')");
+			var gremlin = new StringBuilder($"g.addV('{(vertexAttribute != null && (!string.IsNullOrWhiteSpace(vertexAttribute.Label)) ? vertexAttribute.Label : typeof(T).Name)}')");
 
 			foreach (var property in typeof(T).GetProperties())
 			{
-				if (property.GetValue(testValue) != default)
+				if (property.GetValue(testValue) != default && IsValidType(property.PropertyType))
 				{
-					if (property.PropertyType == typeof(string) && !string.IsNullOrWhiteSpace(property.GetValue(testValue).ToString()))
-					{
-						string key = string.Empty;
-						var propertyAttibutes = property.GetCustomAttributes(true);
-						if (propertyAttibutes.Length > 0)
-							foreach (var propertyAttribute in propertyAttibutes)
+					string key = property.Name;
+					var propertyAttibutes = property.GetCustomAttributes(true);
+					if (propertyAttibutes.Length > 0)
+						foreach (var propertyAttribute in propertyAttibutes)
+						{
+							if (propertyAttribute.GetType() == typeof(GraphPropertyAttribute))
 							{
-								if (propertyAttribute.GetType() == typeof(GraphPropertyAttribute))
-								{
-									var graphPropertyAttribute = GraphPropertyAttribute.GetGraphPropertyAttribute(property);
-									key = (string.IsNullOrWhiteSpace(graphPropertyAttribute.Key)) ? CasedString(property.Name, vertextAttribute.PropertyNamingPolicy) : graphPropertyAttribute.Key;
-								}
+								var graphPropertyAttribute = (GraphPropertyAttribute)Attribute.GetCustomAttribute(property, typeof(GraphPropertyAttribute), true);
+								key = (string.IsNullOrWhiteSpace(graphPropertyAttribute.Key)) ? CasedString(property.Name, vertexAttribute.PropertyNamingPolicy) : graphPropertyAttribute.Key;
 							}
-						gremlin.Append($".property('{key}', '{property.GetValue(testValue)}')");
+						}
+
+					if (property.PropertyType == typeof(bool))
+						gremlin.Append($".property('{key}', {property.GetValue(testValue).ToString().ToLower()})");
+					else
+					{
+						var isNumeric = CheckAndGetNumber(property.GetValue(testValue));
+						if (isNumeric.Item1)
+							gremlin.Append($".property('{key}', {isNumeric.Item2})");
+						else
+							gremlin.Append($".property('{key}', '{property.GetValue(testValue)}')");
 					}
+
+
+
+
+
+
 				}
 			}
 
@@ -75,6 +89,43 @@ namespace CosmosGremlinORM.SampleConsole
 					break;
 			}
 			return input;
+		}
+
+		private static Tuple<bool, string> CheckAndGetNumber(object testValue)
+		{
+
+			var returnValue = new Tuple<bool, string>(false, string.Empty);
+			bool isFloat = float.TryParse(testValue.ToString(), out var floatNumber);
+			if (isFloat)
+			{
+				bool isLong = long.TryParse(testValue.ToString(), out var longNumber);
+				if (isLong)
+					returnValue = new Tuple<bool, string>(true, longNumber.ToString());
+				else
+					returnValue = new Tuple<bool, string>(true, floatNumber.ToString());
+			}
+
+			bool isDecimal = decimal.TryParse(testValue.ToString(), out var decimalNumber);
+			if (isDecimal)
+				returnValue = new Tuple<bool, string>(true, decimalNumber.ToString());
+
+			return returnValue;
+
+		}
+
+		private static bool IsValidType(Type type)
+		{
+			// TODO: Look at a better of figuring out what is a valid type
+			if (type.IsPrimitive)
+				return true;
+			else if (type == typeof(string))
+				return true;
+			else if (type == typeof(DateTime))
+				return true;
+			else if (type == typeof(Uri))
+				return true;
+			else
+				return false;
 		}
 
 	}

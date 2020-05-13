@@ -37,6 +37,11 @@ namespace CosmosGremlinORM.Sample
 		[GraphProperty(IsRequired = false)]
 		public Uri RegistrationSiteUri { get; set; }
 
+		[GraphProperty(IsRequired = false)]
+		public float ThisIsANumber { get; set; }
+
+		public bool CurrentEvent { get; set; }
+
 	}
 
 }
