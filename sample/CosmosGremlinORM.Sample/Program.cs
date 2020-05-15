@@ -1,16 +1,13 @@
-﻿using CosmosGremlinORM.Sample;
-using Microsoft.VisualBasic.CompilerServices;
-using System;
-using System.Diagnostics.Contracts;
-using System.Security.Cryptography.X509Certificates;
+﻿using System;
+
 using System.Text;
 
-namespace CosmosGremlinORM.SampleConsole
+namespace CosmosGremlinORM.Sample
 {
 
 	public class Program
 	{
-		public static void Main(string[] args)
+		public static void Main()
 		{
 
 			var eventDetail = new EventDetail()
